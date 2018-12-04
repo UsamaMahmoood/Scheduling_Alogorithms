@@ -1,110 +1,55 @@
-# In[ ]:
 
-print ("Enter All value with space")
-inputs = np.array([int(x) for x in input().split()])
+# Function to find the waiting time for all processes 
+def findWaitingTime(processes, n, bt, wt): 
 
+	# waiting time for first process is 0 
+	wt[0] = 0
 
-# **This step checking that user input **even number** of values. And showing the inputs.**
+	# calculating waiting time 
+	for i in range(1, n): 
+		wt[i] = bt[i - 1] + wt[i - 1] 
 
-# In[ ]:
+# Function to calculate turn around time 
+def findTurnAroundTime(processes, n, bt, wt, tat): 
 
-if len(inputs)%2 == 1:
-    print ("Please input correct value, May be you missed something (You need to input even number of values, two for each process)")
-else:
-    print("Successfully inserted all values")
-inputs
+	# calculating turnaround time by adding bt[i] + wt[i] 
+	for i in range(n): 
+		tat[i] = bt[i] + wt[i] 
 
+# Function to calculate average time 
+def findavgTime( processes, n, bt): 
 
-# **In this step whole user 1D input is converted into a 2D array, Also showing the 2D output where each column represents a process. Where first element is **Arrival time** AT **and the Second element is Burst time **BT ** **
+	wt = [0] * n 
+	tat = [0] * n 
+	total_wt = 0
+	total_tat = 0
 
-# In[ ]:
+	# Function to find waiting time of all processes 
+	findWaitingTime(processes, n, bt, wt) 
 
-process = inputs.reshape((int(len(inputs)/2), 2)).tolist()
+	# Function to find turn around time for all processes 
+	findTurnAroundTime(processes, n, bt, wt, tat) 
 
-for p in range(len(process)):
-    process[p].insert(0, p+1)
+	# Display processes along with all details 
+	print( "Processes Burst time " + " Waiting time " + " Turn around time") 
 
-process
+	# Calculate total waiting time and total turn around time 
+	for i in range(n): 	
+		total_wt = total_wt + wt[i] 
+		total_tat = total_tat + tat[i] 
+		print(" " + str(i + 1) + "\t\t" + str(bt[i]) + "\t " + str(wt[i]) + "\t\t " + str(tat[i])) 
 
+	print( "Average waiting time = " + str(total_wt / n)) 
+	print("Average turn around time = "+ str(total_tat / n)) 
 
-# **This step is sorting the processes by their Arrival time** AT
+# Driver code 
+if __name__ =="__main__": 
+	
+	# process id's 
+	processes = [ 1, 2, 3] 
+	n = len(processes) 
 
-# In[ ]:
+	# Burst time of all processes 
+	burst_time = [10, 5, 8] 
 
-fcfs = sorted(process,key=lambda x: (x[1],x[2],x[0]))
-fcfs
-
-
-# **This step is calculating the completion time **CT**, We know that *Completion Time is the Time at which process completes its execution*. ** Also showning Completion Time for each process.
-
-# In[ ]:
-
-ct = []
-for i in range(int(len(fcfs))):
-    if i == 0:
-        ct.append(fcfs[i][1] + fcfs[i][2])
-    else:
-        ct.append(fcfs[i][2] + ct[i-1])
-
-# printing Compltion time
-# printing Compltion time
-for i in range(len(ct)):
-    print ("Compltion time for P{} is: {}".format(fcfs[i][0],ct[i]))
-
-
-# **This step is calculating the Turn Around Time **TAT**, We know that *Turn Around Time is the Time Difference between completion time and arrival time.**  Also showning Completion Time for each process. 
-# 
-# `Turn Around Time = Completion Time - Arrival Time`
-
-# In[ ]:
-
-tat = []
-for i in range(int(len(fcfs))):
-    tat.append(ct[i] - fcfs[i][1])
-    
-# printing Turn Around Time
-for i in range(len(tat)):
-    print ("Turn Around Time for P{} is: {}".format(fcfs[i][0],tat[i]))
-
-
-# **This step is calculating the average Turn Around Time for all the process and showing them. ** We know,
-# 
-# `Average Turn Around Time = "sum of all Turn Around Time" DEVIDE by "Total number of process"`
-
-# In[ ]:
-
-avarage_TAT = round(np.mean(tat),2)
-print ("Average Turn Around Time for all process is: ",avarage_TAT)
-
-
-# **This stp is calculatin Waiting time for each process, Waiting Time(W.T) is the Time Difference between turn around time and burst time.**We know,
-# 
-# `Waiting Time = Turn Around Time - Burst Time`
-
-# In[ ]:
-
-wt = []
-for i in range(int(len(fcfs))):
-    wt.append(tat[i] - fcfs[i][2])
-    
-# printing Waiting time
-for i in range(len(wt)):
-    print ("Waiting time for P{} is: {}".format(fcfs[i][0],wt[i]))
-
-
-# **This step is calculatin average Waiting time for each process.**We know,
-# 
-# `Average Waiting Time = "sum of all Waiting Time" DIVIDE by "Total number of process"`
-
-# In[ ]:
-
-avarage_WT = round(np.mean(wt),2)
-print ("Average Waiting Time for all process is:",avarage_WT)
-
-
-# ### Final Answer:
-
-# In[ ]:
-
-print ("Average Waiting Time for all process is: ",avarage_WT,"sec.")
-print ("Average Turn Around Time for all process is: ",avarage_TAT,"sec.")
+	findavgTime(processes, n, burst_time) 
